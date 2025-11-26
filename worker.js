@@ -5027,7 +5027,7 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
             }
             const isAtBottom =
               container.scrollHeight - container.scrollTop <=
-              container.clientHeight + vh * 0.18;
+              container.clientHeight + vh * 0.2;
             if (isAtBottom) {
               container.scrollTop = container.scrollHeight;
             }
