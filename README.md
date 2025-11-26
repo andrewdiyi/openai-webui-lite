@@ -63,7 +63,7 @@
 | :--- | :---: | :--- | :--- |
 | `SECRET_PASSWORD` | 否 | **共享密码**。设置后，用户需输入此密码才能使用您配置的 API Key。适合家人朋友共享。 | `my-secret-pwd` |
 | `API_KEYS` | 否 | **API Key 池**。多个 Key 用英文逗号 `,` 分隔，系统会自动轮询使用，实现简单的负载均衡。 | `sk-key1,sk-key2` |
-| `MODEL_IDS` | **是** | **模型列表**。定义前端下拉框显示的模型。支持 `ID=显示名称` 格式。 | `gpt-4o,gemini-1.5-pro` |
+| `MODEL_IDS` | **是** | **模型列表**。定义前端下拉框显示的模型。支持 `ID=显示名称` 格式。 | `gpt-4o,gemini-2.5-pro` |
 | `API_BASE` | 否 | **接口地址**。默认为 `https://api.openai.com`。如使用中转服务需修改此项。 | `https://api.openai.com` |
 | `TAVILY_KEYS` | 否 | **联网搜索 Key**。配置后前端会出现“联网搜索”选项。获取地址：[tavily.com](https://iflow.cn/?invite_code=vNEjKzbSTbhgWooCw15Bsw%3D%3D&open=setting) | `tvly-xxxx` |
 | `TITLE` | 否 | **网站标题**。自定义浏览器标签页标题。 | `我的 AI 助手` |
@@ -75,9 +75,9 @@
 | 服务商 | API_BASE | API_KEYS 示例 | MODEL_IDS 示例 | 备注 |
 | :--- | :--- | :--- | :--- | :--- |
 | **OpenAI** | `https://api.openai.com` | `sk-proj-xxx` | `gpt-4o,gpt-4o-mini,o1-preview` | 推荐 Deno 部署 |
-| **Gemini** | `https://generativelanguage.googleapis.com` | `AIzaSyxxx` | `gemini-1.5-pro,gemini-1.5-flash` | 推荐 Deno 部署 |
+| **Gemini** | `https://generativelanguage.googleapis.com` | `AIzaSyxxx` | `gemini-2.5-pro,gemini-2.5-flash` | 推荐 Deno 部署 |
 | **心流 AI** | `https://apis.iflow.cn` | `sk-xxx` | `qwen3-max,deepseek-v3` | 国产模型聚合，Cloudflare 部署即可 |
-| **OpenRouter** | `https://openrouter.ai/api` | `sk-or-xxx` | `anthropic/claude-3.5-sonnet` | 聚合平台 |
+| **OpenRouter** | `https://openrouter.ai/api` | `sk-or-xxx` | `anthropic/claude-4.5-sonnet` | 聚合平台 |
 | **DeepSeek** | `https://api.deepseek.com` | `sk-xxx` | `deepseek-chat,deepseek-coder` | 国产之光 |
 
 > **💡 资源推荐**：如果您需要免费且稳定的国产大模型 API（如 Qwen, DeepSeek），推荐尝试 [心流 AI](https://iflow.cn/?invite_code=vNEjKzbSTbhgWooCw15Bsw%3D%3D&open=setting)，注册即送额度，支持 Cloudflare Workers 稳定调用。
