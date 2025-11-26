@@ -80,7 +80,7 @@
 | `API_KEYS` | 否 | **API Key 池**。多个 Key 用英文逗号 `,` 分隔，系统会自动轮询使用，实现简单的负载均衡。 | `sk-key1,sk-key2` |
 | `MODEL_IDS` | **是** | **模型列表**。定义前端下拉框显示的模型。支持 `ID=显示名称` 格式。 | `gpt-4o,gemini-2.5-pro` |
 | `API_BASE` | 否 | **接口地址**。默认为 `https://api.openai.com`。如使用中转服务需修改此项。 | `https://api.openai.com` |
-| `TAVILY_KEYS` | 否 | **联网搜索 Key**。配置后前端会出现“联网搜索”选项。获取地址：[tavily.com](https://iflow.cn/?invite_code=vNEjKzbSTbhgWooCw15Bsw%3D%3D&open=setting) | `tvly-xxxx` |
+| `TAVILY_KEYS` | 否 | **联网搜索 Key**。配置后前端会出现“联网搜索”选项。获取地址：[tavily.com](https://tavily.com/) | `tvly-xxxx` |
 | `TITLE` | 否 | **网站标题**。自定义浏览器标签页标题。 | `我的 AI 助手` |
 | `DEMO_PASSWORD` | 否 | **演示密码**。用于公开演示，有频率限制。 | `demo123` |
 | `DEMO_MAX_TIMES_PER_HOUR` | 否 | 演示密码每小时最大调用次数，默认 15。 | `20` |
