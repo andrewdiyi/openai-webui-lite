@@ -1332,6 +1332,7 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#605bec" />
     <meta name="description" content="OpenAI Chat - 智能对话助手" />
+    <meta http-equiv="Content-Language" content="zh-CN">
     <title>OpenAI Chat</title>
 
     <!-- Favicon -->
