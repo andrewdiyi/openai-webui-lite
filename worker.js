@@ -1736,6 +1736,14 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
         box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
       }
 
+      .header .wide-btn {
+        opacity: 0.3;
+      }
+
+      .header .wide-btn:hover {
+        opacity: 1;
+      }
+
       .api-key-section {
         margin-bottom: 15px;
       }
@@ -2723,7 +2731,8 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                 class="tool-btn wide-btn"
                 @click="toggleWideMode"
               >
-                {{ isWideMode ? '› 收窄 ‹' : '‹ 加宽 ›' }}
+                {{ isWideMode ? '&nbsp;› 收窄 ‹&nbsp;' : '&nbsp;‹ 加宽 ›&nbsp;'
+                }}
               </button>
               <button
                 v-if="currentSession && currentSession.answer && !isLoading && !isStreaming"
