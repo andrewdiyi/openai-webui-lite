@@ -3638,6 +3638,7 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                     .replace('Iflow/', 'iFlow/')
                     .replace('Gcli', 'gCLI')
                     .replace('B4u/', 'B4U/')
+                    .replace('Kfc/', 'KFC/')
                     .replace('/', ' / ');
                   return {
                     value: id,
