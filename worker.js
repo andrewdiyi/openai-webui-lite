@@ -805,6 +805,8 @@ function getLiteModelId(modelIds) {
     .map(i => i.split('=')[0].trim())
     .filter(i => i);
   const parts = [
+    '-v3',
+    '-k2',
     '-mini',
     '-nano',
     '-flash',
@@ -815,8 +817,6 @@ function getLiteModelId(modelIds) {
     '-alpha',
     '-haiku',
     '-4o',
-    '-v3',
-    '-k2',
     '-r1',
     '-air',
     'gpt'
