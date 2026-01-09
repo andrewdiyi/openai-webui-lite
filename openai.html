@@ -1949,7 +1949,7 @@
           },
           isTotallyBlank() {
             const list = this.sessions || [];
-            return !list.some(function (s) {
+            return !list.some(s => {
               return s.messages && s.messages.length > 0;
             });
           },
@@ -2205,7 +2205,7 @@
               maxOptions: 100,
               maxItems: 1,
               render: {
-                option: function (data, escape) {
+                option: (data, escape) => {
                   return (
                     '<div>' +
                     '<span class="title">' +
@@ -2214,10 +2214,10 @@
                     '</div>'
                   );
                 },
-                item: function (data, escape) {
+                item: (data, escape) => {
                   return '<div>' + escape(data.label) + '</div>';
                 },
-                no_results: function (data, escape) {
+                no_results: (data, escape) => {
                   return '<div class="no-results" style="padding: 0.75em; text-align: center; color: #999;">查无此项</div>';
                 }
               },
@@ -2366,7 +2366,7 @@
           migrateSessionData(sessions) {
             if (!sessions || !Array.isArray(sessions)) return sessions;
             let migrated = false;
-            sessions.forEach(function (session) {
+            sessions.forEach(session => {
               // 如果已经有messages数组，跳过
               if (session.messages && Array.isArray(session.messages)) return;
               // 初始化messages数组
@@ -2475,11 +2475,24 @@
             const savedModel = await window.openaiDB.getItem(
               'openai_selected_model'
             );
-            const defaultModel =
-              this.availableModels.length > 0 && this.availableModels[0]
-                ? this.availableModels[0].value
-                : 'gpt-4o-mini';
-            this.selectedModel = savedModel || defaultModel;
+            // 验证 savedModel 是否在可用模型列表中
+            let modelToUse = null;
+            if (
+              savedModel &&
+              this.availableModels.some(m => {
+                return m.value === savedModel;
+              })
+            ) {
+              modelToUse = savedModel;
+            } else if (
+              this.availableModels.length > 0 &&
+              this.availableModels[0]
+            ) {
+              modelToUse = this.availableModels[0].value;
+            } else {
+              modelToUse = 'gpt-4o-mini';
+            }
+            this.selectedModel = modelToUse;
 
             // 加载联网搜索开关状态
             this.needSearch = !!(await window.openaiDB.getItem(
@@ -2589,29 +2602,24 @@
           },
 
           deleteSession(sessionId) {
-            var self = this;
             if (this.isLoading || this.isStreaming || this.isUploadingImage)
               return;
-            var doDelete = function () {
-              self.sessions = self.sessions.filter(function (s) {
-                return s.id !== sessionId;
-              });
-              if (self.currentSessionId === sessionId) {
-                self.currentSessionId =
-                  self.sessions.length > 0 ? self.sessions[0].id : null;
+            const doDelete = () => {
+              this.sessions = this.sessions.filter(s => s.id !== sessionId);
+              if (this.currentSessionId === sessionId) {
+                this.currentSessionId =
+                  this.sessions.length > 0 ? this.sessions[0].id : null;
               }
-              if (self.sessions.length === 0) {
-                self.createNewSession();
+              if (this.sessions.length === 0) {
+                this.createNewSession();
               }
-              self.loadDraftFromCurrentSession();
-              self.saveData();
+              this.loadDraftFromCurrentSession();
+              this.saveData();
             };
             // 如果是空会话, 直接删除
-            var session = this.sessions.find(function (s) {
-              return s.id === sessionId;
-            });
+            const session = this.sessions.find(s => s.id === sessionId);
             if (!session) return;
-            var isEmpty =
+            const isEmpty =
               (!session.messages || session.messages.length === 0) &&
               !session.draft;
             if (isEmpty) {
@@ -2630,7 +2638,7 @@
                 reverseButtons: true
               },
               false
-            ).then(function (result) {
+            ).then(result => {
               if (result.isConfirmed) {
                 doDelete();
               }
@@ -2640,9 +2648,7 @@
           // 获取会话中用户消息的数量
           getUserMessageCount(session) {
             if (!session || !session.messages) return 0;
-            return session.messages.filter(function (m) {
-              return m.type === 'user';
-            }).length;
+            return session.messages.filter(m => m.type === 'user').length;
           },
 
           updateRolePrompt() {
@@ -3147,9 +3153,7 @@
           updateSessionTitle() {
             var session = this.currentSession;
             if (session && session.messages && session.messages.length > 0) {
-              var firstUserMsg = session.messages.find(function (m) {
-                return m.type === 'user';
-              });
+              var firstUserMsg = session.messages.find(m => m.type === 'user');
               if (firstUserMsg && firstUserMsg.content) {
                 var text = firstUserMsg.content;
                 session.title =
@@ -3307,9 +3311,8 @@
             this.isLoading = true;
             this.isStreaming = false;
             this.isSentForAWhile = false;
-            var self = this;
-            this.sleep(2500).then(function () {
-              self.isSentForAWhile = true;
+            this.sleep(2500).then(() => {
+              this.isSentForAWhile = true;
             });
             this.streamingContent = '';
             this.abortController = new AbortController();
@@ -3385,29 +3388,25 @@
                 },
                 body: JSON.stringify({ query: queryStr })
               })
-                .then(function (res) {
-                  return res.json();
-                })
-                .catch(function () {
-                  return [];
-                });
+                .then(res => res.json())
+                .catch(() => []);
               var hasResult =
                 searchResList &&
                 searchResList.length &&
-                searchResList.some(function (item) {
-                  return item.results && item.results.length > 0;
-                }) &&
+                searchResList.some(
+                  item => item.results && item.results.length > 0
+                ) &&
                 JSON.stringify(searchResList).length > 50;
               if (hasResult) {
-                searchResList = searchResList.filter(function (r) {
+                searchResList = searchResList.filter(r => {
                   return r.results && r.results.length > 0;
                 });
-                searchResList.forEach(function (r) {
-                  self.saveSearchRes(r);
+                searchResList.forEach(r => {
+                  this.saveSearchRes(r);
                 });
-                searchResList.forEach(function (searchRes) {
-                  searchRes.results = searchRes.results.map(function (item) {
-                    var rest = {};
+                searchResList.forEach(searchRes => {
+                  searchRes.results = searchRes.results.map(item => {
+                    const rest = {};
                     for (var k in item) {
                       if (k !== 'url' && k !== 'score' && k !== 'raw_content') {
                         rest[k] = item[k];
@@ -3416,12 +3415,10 @@
                     return rest;
                   });
                 });
-                searchQueries = searchResList.map(function (r) {
-                  return r.query;
-                });
-                searchCounts = searchResList.map(function (r) {
-                  return (r.results && r.results.length) || 0;
-                });
+                searchQueries = searchResList.map(r => r.query);
+                searchCounts = searchResList.map(
+                  r => (r.results && r.results.length) || 0
+                );
                 apiMessages.push({
                   role: 'assistant',
                   content:
@@ -3472,16 +3469,10 @@
                 if (searchQueries.length && !this.streamingContent) {
                   this.streamingContent =
                     '> 联网搜索：' +
-                    searchQueries
-                      .map(function (q) {
-                        return '「' + q + '」';
-                      })
-                      .join('、') +
+                    searchQueries.map(q => '「' + q + '」').join('、') +
                     '\\n> \\n> AI 模型通过实时调用 Tavily 搜索引擎，找到了 ' +
                     searchCounts
-                      .map(function (c) {
-                        return '[' + c + '](javascript:void(0))';
-                      })
+                      .map(c => '[' + c + '](javascript:void(0))')
                       .join(' + ') +
                     ' 条相关信息。\\n\\n';
                 }
@@ -3506,14 +3497,12 @@
                   stream: true
                 }),
                 signal: this.abortController.signal
-              }).catch(function (e) {
+              }).catch(e => {
                 throw e;
               });
 
               if (!response.ok) {
-                var errorData = await response.json().catch(function () {
-                  return {};
-                });
+                var errorData = await response.json().catch(() => ({}));
                 var errorMessage =
                   (errorData.error && errorData.error.message) ||
                   errorData.error;
@@ -3687,36 +3676,29 @@
               confirmButtonColor: '#d33',
               cancelButtonText: '取消',
               reverseButtons: true
-            }).then(
-              function (result) {
-                if (!result.isConfirmed) return;
-                var questionText = msg.content || '';
-                // 恢复图片到上传列表
-                this.uploadedImages = (msg.images || [])
-                  .filter(function (i) {
-                    return i && i !== 'INVALID';
-                  })
-                  .map(function (i) {
-                    return { url: i };
-                  });
-                // 删除从 msgIndex 开始的所有消息
-                session.messages = session.messages.slice(0, msgIndex);
-                // 如果删除了所有消息，重置标题和摘要
-                if (session.messages.length === 0) {
-                  session.title = '新会话';
-                  session.summary = '';
-                }
-                session.draft = questionText;
-                this.messageInput = questionText;
-                session.role = this.getRolePrompt();
-                this.saveData();
-              }.bind(this)
-            );
+            }).then(result => {
+              if (!result.isConfirmed) return;
+              var questionText = msg.content || '';
+              // 恢复图片到上传列表
+              this.uploadedImages = (msg.images || [])
+                .filter(i => i && i !== 'INVALID')
+                .map(i => ({ url: i }));
+              // 删除从 msgIndex 开始的所有消息
+              session.messages = session.messages.slice(0, msgIndex);
+              // 如果删除了所有消息，重置标题和摘要
+              if (session.messages.length === 0) {
+                session.title = '新会话';
+                session.summary = '';
+              }
+              session.draft = questionText;
+              this.messageInput = questionText;
+              session.role = this.getRolePrompt();
+              this.saveData();
+            });
           },
 
           // 删除最新的回答并重新回答
           regenerateAnswer(msgIndex) {
-            var self = this;
             // 二次确认
             this.showSwal({
               title: '确认删除回答',
@@ -3727,11 +3709,11 @@
               confirmButtonColor: '#d33',
               cancelButtonText: '取消',
               reverseButtons: true
-            }).then(function (result) {
+            }).then(result => {
               if (!result.isConfirmed) return;
-              if (self.isLoading || self.isStreaming || self.isUploadingImage)
+              if (this.isLoading || this.isStreaming || this.isUploadingImage)
                 return;
-              var session = self.currentSession;
+              var session = this.currentSession;
               if (
                 !session ||
                 !session.messages ||
@@ -3744,9 +3726,9 @@
 
               // 删除这个回答（保留之前的用户问题）
               session.messages = session.messages.slice(0, msgIndex);
-              self.saveData();
+              this.saveData();
               // 重新发送消息
-              self.sendMessage();
+              this.sendMessage();
             });
           },
 
@@ -3781,12 +3763,8 @@
               // 没有回答，需要重试：删除这条用户消息并重新发送
               this.messageInput = lastUserMsg.content || '';
               this.uploadedImages = (lastUserMsg.images || [])
-                .filter(function (i) {
-                  return i && i !== 'INVALID';
-                })
-                .map(function (i) {
-                  return { url: i };
-                });
+                .filter(i => i && i !== 'INVALID')
+                .map(i => ({ url: i }));
               // 删除最后一条用户消息
               session.messages = session.messages.slice(0, lastUserMsgIdx);
               this.sendMessage();
@@ -3795,7 +3773,6 @@
 
           // 生成会话摘要
           async generateSessionSummary() {
-            var self = this;
             var session = this.currentSession;
             if (!session || !session.messages || session.messages.length < 2)
               return;
@@ -3833,7 +3810,7 @@
                 answer: answer
               })
             })
-              .then(function (response) {
+              .then(response => {
                 if (!response.ok) {
                   throw new Error(
                     'HTTP ' + response.status + ': ' + response.statusText
@@ -3841,12 +3818,10 @@
                 }
                 return response.json();
               })
-              .then(function (data) {
+              .then(data => {
                 if (data.success && data.summary) {
                   var summary = data.summary.trim();
-                  var item = self.sessions.find(function (s) {
-                    return s.id === sessionId;
-                  });
+                  var item = this.sessions.find(s => s.id === sessionId);
                   if (item) {
                     // 移除结尾的标点符号
                     if (
@@ -3857,15 +3832,15 @@
                       summary = summary.slice(0, -1);
                     }
                     item.summary = summary;
-                    self.sleep(1000).then(function () {
-                      self.saveData();
+                    this.sleep(1000).then(() => {
+                      this.saveData();
                     });
                   }
                 } else {
                   throw new Error('未能生成摘要');
                 }
               })
-              .catch(function (error) {
+              .catch(error => {
                 console.error('生成摘要失败:', error);
               });
           },
