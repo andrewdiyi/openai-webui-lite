@@ -3737,9 +3737,14 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
             this.autoFoldRolePrompt();
 
             // 加载选中的模型
-            this.selectedModel =
-              (await window.openaiDB.getItem('openai_selected_model')) ||
-              this.availableModels[0].value;
+            const savedModel = await window.openaiDB.getItem(
+              'openai_selected_model'
+            );
+            const defaultModel =
+              this.availableModels.length > 0 && this.availableModels[0]
+                ? this.availableModels[0].value
+                : 'gpt-4o-mini';
+            this.selectedModel = savedModel || defaultModel;
 
             // 加载联网搜索开关状态
             this.needSearch = !!(await window.openaiDB.getItem(
