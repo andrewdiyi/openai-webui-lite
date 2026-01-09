@@ -2727,7 +2727,10 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                 ></div>
               </div>
               <!-- 使用v-for渲染消息列表 -->
-              <template v-for="(msg, msgIndex) in currentSession.messages" :key="msgIndex">
+              <template
+                v-for="(msg, msgIndex) in currentSession.messages"
+                :key="msgIndex"
+              >
                 <!-- 用户消息 -->
                 <div
                   v-if="msg.type === 'user'"
@@ -2736,7 +2739,9 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                   <h4>
                     <span>
                       <span>{{ getMsgLabel(msg, msgIndex) }}</span>
-                      <small v-if="msg.time">&emsp;{{ formatTimeStr(msg.time) }}</small>
+                      <small v-if="msg.time"
+                        >&emsp;{{ formatTimeStr(msg.time) }}</small
+                      >
                     </span>
                     <div>
                       <button
@@ -2773,7 +2778,8 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                       :style="img === 'INVALID' ? 'cursor: not-allowed; opacity: 0.5;' : ''"
                       @click="previewImage(img)"
                     >
-                      📎 {{ img === 'INVALID' ? '本地' : '' }}图片{{ imgIdx + 1 }}
+                      📎 {{ img === 'INVALID' ? '本地' : '' }}图片{{ imgIdx + 1
+                      }}
                     </a>
                   </div>
                 </div>
@@ -2785,7 +2791,9 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                   <h4>
                     <span>
                       <span>回答</span>
-                      <small v-if="msg.model">&emsp;{{ getModelName(msg.model) }}</small>
+                      <small v-if="msg.model"
+                        >&emsp;{{ getModelName(msg.model) }}</small
+                      >
                     </span>
                     <div v-if="!isStreaming || !isLastBotMsg(msgIndex)">
                       <button
@@ -3189,11 +3197,6 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
             // 或者最后一条消息是bot的回复，用户可以继续追问
             return false;
           },
-          // 获取会话中用户消息的数量
-          getUserMessageCount(session) {
-            if (!session || !session.messages) return 0;
-            return session.messages.filter(function(m) { return m.type === 'user'; }).length;
-          },
           // 检查是否已达到最大消息数限制
           isMaxMessagesReached() {
             var session = this.currentSession;
@@ -3204,13 +3207,16 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
           isStreamingNewAnswer() {
             if (!this.isLoading && !this.isStreaming) return false;
             var session = this.currentSession;
-            if (!session || !session.messages || session.messages.length === 0) return false;
+            if (!session || !session.messages || session.messages.length === 0)
+              return false;
             var lastMsg = session.messages[session.messages.length - 1];
             return lastMsg.type === 'user';
           },
           isTotallyBlank() {
             const list = this.sessions || [];
-            return !list.some(function(s) { return s.messages && s.messages.length > 0; });
+            return !list.some(function (s) {
+              return s.messages && s.messages.length > 0;
+            });
           },
           inputPlaceholder() {
             var session = this.currentSession || {};
@@ -3269,7 +3275,8 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
             var session = this.currentSession;
             if (!session) return false;
             if (this.isLoading || this.isStreaming) return false;
-            if (!session.messages || session.messages.length === 0) return false;
+            if (!session.messages || session.messages.length === 0)
+              return false;
             // 最后一条消息是user类型且没有对应的bot回复
             var lastMsg = session.messages[session.messages.length - 1];
             return lastMsg.type === 'user';
@@ -3624,7 +3631,7 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
           migrateSessionData(sessions) {
             if (!sessions || !Array.isArray(sessions)) return sessions;
             let migrated = false;
-            sessions.forEach(function(session) {
+            sessions.forEach(function (session) {
               // 如果已经有messages数组，跳过
               if (session.messages && Array.isArray(session.messages)) return;
               // 初始化messages数组
@@ -3682,7 +3689,9 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
               delete session.model2;
             });
             if (migrated) {
-              console.log('[Migration] Sessions migrated to new messages format');
+              console.log(
+                '[Migration] Sessions migrated to new messages format'
+              );
             }
             return sessions;
           },
@@ -3797,7 +3806,9 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
             this.saveDraftToCurrentSession();
             const firstSession = this.sessions[0];
             // 检查第一个会话是否为空（没有消息）
-            var isFirstEmpty = firstSession && (!firstSession.messages || firstSession.messages.length === 0);
+            var isFirstEmpty =
+              firstSession &&
+              (!firstSession.messages || firstSession.messages.length === 0);
             if (isFirstEmpty) {
               this.currentSessionId = firstSession.id;
             } else {
@@ -3807,7 +3818,7 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                 summary: '',
                 role: '',
                 draft: '',
-                messages: []  // 使用消息数组代替固定属性
+                messages: [] // 使用消息数组代替固定属性
               };
               this.sessions.unshift(newSession);
               this.currentSessionId = newSession.id;
@@ -3841,8 +3852,10 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
             var self = this;
             if (this.isLoading || this.isStreaming || this.isUploadingImage)
               return;
-            var doDelete = function() {
-              self.sessions = self.sessions.filter(function(s) { return s.id !== sessionId; });
+            var doDelete = function () {
+              self.sessions = self.sessions.filter(function (s) {
+                return s.id !== sessionId;
+              });
               if (self.currentSessionId === sessionId) {
                 self.currentSessionId =
                   self.sessions.length > 0 ? self.sessions[0].id : null;
@@ -3854,9 +3867,13 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
               self.saveData();
             };
             // 如果是空会话, 直接删除
-            var session = this.sessions.find(function(s) { return s.id === sessionId; });
+            var session = this.sessions.find(function (s) {
+              return s.id === sessionId;
+            });
             if (!session) return;
-            var isEmpty = (!session.messages || session.messages.length === 0) && !session.draft;
+            var isEmpty =
+              (!session.messages || session.messages.length === 0) &&
+              !session.draft;
             if (isEmpty) {
               doDelete();
               return;
@@ -3873,11 +3890,19 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                 reverseButtons: true
               },
               false
-            ).then(function(result) {
+            ).then(function (result) {
               if (result.isConfirmed) {
                 doDelete();
               }
             });
+          },
+
+          // 获取会话中用户消息的数量
+          getUserMessageCount(session) {
+            if (!session || !session.messages) return 0;
+            return session.messages.filter(function (m) {
+              return m.type === 'user';
+            }).length;
           },
 
           updateRolePrompt() {
@@ -4206,7 +4231,10 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
           },
 
           copyToClipboard(text) {
-            text = text.replace(/\\[([0-9]+)\\]\\(javascript:void\\(0\\)\\)/g, '$1');
+            text = text.replace(
+              /\\[([0-9]+)\\]\\(javascript:void\\(0\\)\\)/g,
+              '$1'
+            );
             navigator.clipboard
               .writeText(text)
               .then(() => {
@@ -4379,10 +4407,13 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
           updateSessionTitle() {
             var session = this.currentSession;
             if (session && session.messages && session.messages.length > 0) {
-              var firstUserMsg = session.messages.find(function(m) { return m.type === 'user'; });
+              var firstUserMsg = session.messages.find(function (m) {
+                return m.type === 'user';
+              });
               if (firstUserMsg && firstUserMsg.content) {
                 var text = firstUserMsg.content;
-                session.title = text.slice(0, 30) + (text.length > 30 ? '...' : '');
+                session.title =
+                  text.slice(0, 30) + (text.length > 30 ? '...' : '');
               }
             }
           },
@@ -4523,7 +4554,7 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
             this.isStreaming = false;
             this.isSentForAWhile = false;
             var self = this;
-            this.sleep(2500).then(function() {
+            this.sleep(2500).then(function () {
               self.isSentForAWhile = true;
             });
             this.streamingContent = '';
@@ -4541,7 +4572,8 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
             // 遍历messages数组构建API消息
             for (var idx = 0; idx < session.messages.length; idx++) {
               var msg = session.messages[idx];
-              var isLastUserMsg = (idx === session.messages.length - 1) && msg.type === 'user';
+              var isLastUserMsg =
+                idx === session.messages.length - 1 && msg.type === 'user';
 
               if (msg.type === 'user') {
                 var content = [];
@@ -4553,7 +4585,9 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                   });
                 }
                 // 添加图片内容
-                var imagesToUse = isLastUserMsg ? userImagesForSending : (msg.images || []);
+                var imagesToUse = isLastUserMsg
+                  ? userImagesForSending
+                  : msg.images || [];
                 if (imagesToUse && imagesToUse.length > 0) {
                   for (var imgIdx = 0; imgIdx < imagesToUse.length; imgIdx++) {
                     var imageUrl = imagesToUse[imgIdx];
@@ -4567,7 +4601,10 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                 }
                 apiMessages.push({
                   role: 'user',
-                  content: content.length === 1 && content[0].type === 'text' ? content[0].text : content
+                  content:
+                    content.length === 1 && content[0].type === 'text'
+                      ? content[0].text
+                      : content
                 });
               } else if (msg.type === 'bot') {
                 apiMessages.push({
@@ -4583,7 +4620,8 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
             if (this.needSearch) {
               var queryStr = userMessage;
               if (session.messages.length > 1) {
-                queryStr += '\\n\\n当前会话摘要："' + (session.summary || '') + '"';
+                queryStr +=
+                  '\\n\\n当前会话摘要："' + (session.summary || '') + '"';
               }
               var searchResList = await fetch('/search', {
                 method: 'POST',
@@ -4593,22 +4631,28 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                 },
                 body: JSON.stringify({ query: queryStr })
               })
-                .then(function(res) { return res.json(); })
-                .catch(function() { return []; });
+                .then(function (res) {
+                  return res.json();
+                })
+                .catch(function () {
+                  return [];
+                });
               var hasResult =
                 searchResList &&
                 searchResList.length &&
-                searchResList.some(function(item) { return item.results && item.results.length > 0; }) &&
+                searchResList.some(function (item) {
+                  return item.results && item.results.length > 0;
+                }) &&
                 JSON.stringify(searchResList).length > 50;
               if (hasResult) {
-                searchResList = searchResList.filter(function(r) {
+                searchResList = searchResList.filter(function (r) {
                   return r.results && r.results.length > 0;
                 });
-                searchResList.forEach(function(r) {
+                searchResList.forEach(function (r) {
                   self.saveSearchRes(r);
                 });
-                searchResList.forEach(function(searchRes) {
-                  searchRes.results = searchRes.results.map(function(item) {
+                searchResList.forEach(function (searchRes) {
+                  searchRes.results = searchRes.results.map(function (item) {
                     var rest = {};
                     for (var k in item) {
                       if (k !== 'url' && k !== 'score' && k !== 'raw_content') {
@@ -4618,8 +4662,10 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                     return rest;
                   });
                 });
-                searchQueries = searchResList.map(function(r) { return r.query; });
-                searchCounts = searchResList.map(function(r) {
+                searchQueries = searchResList.map(function (r) {
+                  return r.query;
+                });
+                searchCounts = searchResList.map(function (r) {
                   return (r.results && r.results.length) || 0;
                 });
                 apiMessages.push({
@@ -4672,16 +4718,23 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                 if (searchQueries.length && !this.streamingContent) {
                   this.streamingContent =
                     '> 联网搜索：' +
-                    searchQueries.map(function(q) { return '「' + q + '」'; }).join('、') +
+                    searchQueries
+                      .map(function (q) {
+                        return '「' + q + '」';
+                      })
+                      .join('、') +
                     '\\n> \\n> AI 模型通过实时调用 Tavily 搜索引擎，找到了 ' +
-                    searchCounts.map(function(c) { return '[' + c + '](javascript:void(0))'; }).join(' + ') +
+                    searchCounts
+                      .map(function (c) {
+                        return '[' + c + '](javascript:void(0))';
+                      })
+                      .join(' + ') +
                     ' 条相关信息。\\n\\n';
                 }
               }
             }
 
             try {
-
               // 如果上一步search中途已经被用户主动中止,则不再继续
               if (this.abortController === undefined) return;
 
@@ -4699,12 +4752,14 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                   stream: true
                 }),
                 signal: this.abortController.signal
-              }).catch(function(e) {
+              }).catch(function (e) {
                 throw e;
               });
 
               if (!response.ok) {
-                var errorData = await response.json().catch(function() { return {}; });
+                var errorData = await response.json().catch(function () {
+                  return {};
+                });
                 var errorMessage =
                   (errorData.error && errorData.error.message) ||
                   errorData.error;
@@ -4878,25 +4933,31 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
               confirmButtonColor: '#d33',
               cancelButtonText: '取消',
               reverseButtons: true
-            }).then(function(result) {
-              if (!result.isConfirmed) return;
-              var questionText = msg.content || '';
-              // 恢复图片到上传列表
-              this.uploadedImages = (msg.images || [])
-                .filter(function(i) { return i && i !== 'INVALID'; })
-                .map(function(i) { return { url: i }; });
-              // 删除从 msgIndex 开始的所有消息
-              session.messages = session.messages.slice(0, msgIndex);
-              // 如果删除了所有消息，重置标题和摘要
-              if (session.messages.length === 0) {
-                session.title = '新会话';
-                session.summary = '';
-              }
-              session.draft = questionText;
-              this.messageInput = questionText;
-              session.role = this.getRolePrompt();
-              this.saveData();
-            }.bind(this));
+            }).then(
+              function (result) {
+                if (!result.isConfirmed) return;
+                var questionText = msg.content || '';
+                // 恢复图片到上传列表
+                this.uploadedImages = (msg.images || [])
+                  .filter(function (i) {
+                    return i && i !== 'INVALID';
+                  })
+                  .map(function (i) {
+                    return { url: i };
+                  });
+                // 删除从 msgIndex 开始的所有消息
+                session.messages = session.messages.slice(0, msgIndex);
+                // 如果删除了所有消息，重置标题和摘要
+                if (session.messages.length === 0) {
+                  session.title = '新会话';
+                  session.summary = '';
+                }
+                session.draft = questionText;
+                this.messageInput = questionText;
+                session.role = this.getRolePrompt();
+                this.saveData();
+              }.bind(this)
+            );
           },
 
           // 删除最新的回答并重新回答
@@ -4912,16 +4973,21 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
               confirmButtonColor: '#d33',
               cancelButtonText: '取消',
               reverseButtons: true
-            }).then(function(result) {
+            }).then(function (result) {
               if (!result.isConfirmed) return;
               if (self.isLoading || self.isStreaming || self.isUploadingImage)
                 return;
               var session = self.currentSession;
-              if (!session || !session.messages || session.messages.length === 0) return;
-              
+              if (
+                !session ||
+                !session.messages ||
+                session.messages.length === 0
+              )
+                return;
+
               var msg = session.messages[msgIndex];
               if (!msg || msg.type !== 'bot') return;
-              
+
               // 删除这个回答（保留之前的用户问题）
               session.messages = session.messages.slice(0, msgIndex);
               self.saveData();
@@ -4950,18 +5016,23 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
             }
 
             if (lastUserMsgIdx === -1) return;
-            
+
             var lastUserMsg = session.messages[lastUserMsgIdx];
             // 检查这条用户消息后面是否已经有回答
-            var hasAnswer = session.messages.length > lastUserMsgIdx + 1 &&
-                           session.messages[lastUserMsgIdx + 1].type === 'bot';
-            
+            var hasAnswer =
+              session.messages.length > lastUserMsgIdx + 1 &&
+              session.messages[lastUserMsgIdx + 1].type === 'bot';
+
             if (!hasAnswer) {
               // 没有回答，需要重试：删除这条用户消息并重新发送
               this.messageInput = lastUserMsg.content || '';
               this.uploadedImages = (lastUserMsg.images || [])
-                .filter(function(i) { return i && i !== 'INVALID'; })
-                .map(function(i) { return { url: i }; });
+                .filter(function (i) {
+                  return i && i !== 'INVALID';
+                })
+                .map(function (i) {
+                  return { url: i };
+                });
               // 删除最后一条用户消息
               session.messages = session.messages.slice(0, lastUserMsgIdx);
               this.sendMessage();
@@ -4972,10 +5043,11 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
           async generateSessionSummary() {
             var self = this;
             var session = this.currentSession;
-            if (!session || !session.messages || session.messages.length < 2) return;
+            if (!session || !session.messages || session.messages.length < 2)
+              return;
             // 已有摘要且消息数超过2条时不再生成
             if (session.summary && session.messages.length > 2) return;
-            
+
             // 获取第一条用户消息和第一条bot回复
             var firstUserMsg = null;
             var firstBotMsg = null;
@@ -4987,9 +5059,9 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
               }
               if (firstUserMsg && firstBotMsg) break;
             }
-            
+
             if (!firstUserMsg || !firstBotMsg) return;
-            
+
             var sessionId = session.id;
             var question = firstUserMsg.content;
             var answer = firstBotMsg.content;
@@ -5007,7 +5079,7 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                 answer: answer
               })
             })
-              .then(function(response) {
+              .then(function (response) {
                 if (!response.ok) {
                   throw new Error(
                     'HTTP ' + response.status + ': ' + response.statusText
@@ -5015,10 +5087,12 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                 }
                 return response.json();
               })
-              .then(function(data) {
+              .then(function (data) {
                 if (data.success && data.summary) {
                   var summary = data.summary.trim();
-                  var item = self.sessions.find(function(s) { return s.id === sessionId; });
+                  var item = self.sessions.find(function (s) {
+                    return s.id === sessionId;
+                  });
                   if (item) {
                     // 移除结尾的标点符号
                     if (
@@ -5029,7 +5103,7 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                       summary = summary.slice(0, -1);
                     }
                     item.summary = summary;
-                    self.sleep(1000).then(function() {
+                    self.sleep(1000).then(function () {
                       self.saveData();
                     });
                   }
@@ -5037,7 +5111,7 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                   throw new Error('未能生成摘要');
                 }
               })
-              .catch(function(error) {
+              .catch(function (error) {
                 console.error('生成摘要失败:', error);
               });
           },
