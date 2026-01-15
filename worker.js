@@ -730,12 +730,25 @@ ${truncatedAnswer}
       );
 
       // 转发请求到 WebDAV 服务器
+      // 使用 redirect: 'manual' 避免 HTTP 重定向时 PUT 变成 GET 的问题
       const webdavResponse = await fetch(targetUrl, {
         method: apiMethod,
         headers: forwardHeaders,
         body: requestBody,
-        redirect: 'follow'
+        redirect: 'manual'
       });
+
+      // 如果是重定向响应，记录日志
+      if ([301, 302, 303, 307, 308].includes(webdavResponse.status)) {
+        const location = webdavResponse.headers.get('Location');
+        console.log('[WebDAV Proxy] Redirect detected! Location:', location);
+        // 返回错误提示用户使用 HTTPS
+        return createErrorResponse(
+          'WebDAV 服务器返回重定向，请检查是否需要使用 HTTPS URL。重定向目标: ' +
+            location,
+          502
+        );
+      }
 
       // 调试日志
       console.log('[WebDAV Proxy] Response Status:', webdavResponse.status);
