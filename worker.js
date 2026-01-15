@@ -1577,6 +1577,43 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
           }
         }
 
+        // WebDAV 防抖同步（减少频繁写入）
+        _debouncedWebdavSync(value) {
+          this._pendingWebdavData = value;
+          if (this._webdavSyncTimer) {
+            clearTimeout(this._webdavSyncTimer);
+          }
+          this._webdavSyncTimer = setTimeout(async () => {
+            if (this._pendingWebdavData) {
+              console.log('[WebDAV] 同步数据到远程...');
+              var success = await this.webdavPut(
+                'sessions.json',
+                this._pendingWebdavData
+              );
+              if (!success) {
+                console.error('[WebDAV] 同步失败');
+              } else {
+                console.log('[WebDAV] 同步成功');
+              }
+              this._pendingWebdavData = null;
+            }
+            this._webdavSyncTimer = null;
+          }, 3000); // 3秒防抖
+        }
+
+        // 立即同步到 WebDAV（用于页面关闭前等场景）
+        async flushWebdavSync() {
+          if (this._webdavSyncTimer) {
+            clearTimeout(this._webdavSyncTimer);
+            this._webdavSyncTimer = null;
+          }
+          if (this._pendingWebdavData && this.webdavEnabled) {
+            console.log('[WebDAV] 立即同步数据...');
+            await this.webdavPut('sessions.json', this._pendingWebdavData);
+            this._pendingWebdavData = null;
+          }
+        }
+
         async init() {
           return new Promise((resolve, reject) => {
             const request = indexedDB.open(this.dbName, this.version);
@@ -1597,19 +1634,10 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
         }
 
         async setItem(key, value) {
-          // 如果是sessions且启用了WebDAV，则存储到远程
-          if (key === 'openai_sessions' && this.webdavEnabled) {
-            var success = await this.webdavPut('sessions.json', value);
-            if (!success) {
-              console.error('WebDAV保存sessions失败，回退到本地存储');
-            } else {
-              return;
-            }
-          }
-
+          // 先写入本地 IndexedDB（保证数据安全）
           if (!this.db) await this.init();
 
-          return new Promise((resolve, reject) => {
+          await new Promise((resolve, reject) => {
             const transaction = this.db.transaction(
               [this.storeName],
               'readwrite'
@@ -1620,6 +1648,11 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
             request.onerror = () => reject(request.error);
             request.onsuccess = () => resolve();
           });
+
+          // 如果是sessions且启用了WebDAV，则使用防抖同步到远程
+          if (key === 'openai_sessions' && this.webdavEnabled) {
+            this._debouncedWebdavSync(value);
+          }
         }
 
         async getItem(key) {
@@ -3972,6 +4005,9 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
           // 监听浏览器后退事件（移动端体验优化）
           window.addEventListener('popstate', this.handlePopState);
 
+          // 页面关闭前同步 WebDAV 数据
+          window.addEventListener('beforeunload', this.handleBeforeUnload);
+
           // 计算OpenAI DB总数据量
           const totalDataSize = await window.openaiDB.getTotalDataSize();
           if (totalDataSize > 2) {
@@ -3994,6 +4030,7 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
         beforeUnmount() {
           window.removeEventListener('resize', this.checkMobile);
           window.removeEventListener('popstate', this.handlePopState);
+          window.removeEventListener('beforeunload', this.handleBeforeUnload);
         },
         watch: {
           messageInput() {
@@ -4051,6 +4088,15 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
               Swal.close();
               this.swalHashAdded = false;
               return;
+            }
+          },
+
+          // 页面关闭前同步 WebDAV 数据
+          handleBeforeUnload(event) {
+            // 使用 sendBeacon 或同步方式确保数据发送
+            if (window.openaiDB && window.openaiDB._pendingWebdavData) {
+              // 尝试立即同步（注意：beforeunload 中异步操作可能不会完成）
+              window.openaiDB.flushWebdavSync();
             }
           },
 
