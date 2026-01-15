@@ -2835,10 +2835,9 @@
                   this.isShowSettingsModal = false;
                 }
                 return isValid;
-              },
-              dismiss: () => {
-                this.isShowSettingsModal = false;
               }
+            }).then(() => {
+              this.isShowSettingsModal = false;
             });
           },
 

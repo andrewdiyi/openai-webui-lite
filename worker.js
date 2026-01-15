@@ -4184,10 +4184,9 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                   this.isShowSettingsModal = false;
                 }
                 return isValid;
-              },
-              dismiss: () => {
-                this.isShowSettingsModal = false;
               }
+            }).then(() => {
+              this.isShowSettingsModal = false;
             });
           },
 
