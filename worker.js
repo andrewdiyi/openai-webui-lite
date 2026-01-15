@@ -1463,7 +1463,8 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
         async testWebDAVConnection(config) {
           var testFileName = '.webdav-test-' + Date.now() + '.txt';
           var testContent = 'test-' + Date.now();
-          var targetPath = config.path.replace(/\/$/, '') + '/' + testFileName;
+          var regexp = new RegExp('\\/$');
+          var targetPath = config.path.replace(regexp, '') + '/' + testFileName;
           var proxyUrl = this._buildProxyUrl(targetPath);
           var headers = this._buildProxyHeaders(config, {
             'Content-Type': 'text/plain'
