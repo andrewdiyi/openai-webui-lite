@@ -4293,6 +4293,10 @@
               this.uploadedImages = (lastUserMsg.images || [])
                 .filter(i => i && i !== 'INVALID')
                 .map(i => ({ url: i }));
+              // 恢复文本附件到上传列表
+              this.uploadedPlaintexts = (lastUserMsg.plaintexts || []).map(item => {
+                return { name: item.name, content: item.content };
+              });
               // 删除最后一条用户消息
               session.messages = session.messages.slice(0, lastUserMsgIdx);
               this.sendMessage();
