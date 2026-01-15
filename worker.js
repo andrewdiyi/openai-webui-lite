@@ -1706,7 +1706,9 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
             // 设置加载状态
             if (window.app) window.app.isLoadingRemoteSessions = true;
             try {
-              var remoteData = await this.webdavGet('sessions.json?v=' + Date.now());
+              var remoteData = await this.webdavGet(
+                'sessions.json?v=' + Date.now()
+              );
               if (remoteData !== null) {
                 return remoteData;
               }
@@ -3136,8 +3138,17 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
               v-if="!currentSession || !currentSession.messages || currentSession.messages.length === 0"
               class="empty-state"
             >
-              <h3>开始与 AI 对话</h3>
-              <p>选择一个模型并输入您的问题</p>
+              <div
+                v-if="isLoadingRemoteSessions"
+                class="loading-remote-sessions"
+              >
+                <span class="loading-spinner"></span>
+                <span>正在加载远程数据...</span>
+              </div>
+              <template v-if="!isLoadingRemoteSessions">
+                <h3>开始与 AI 对话</h3>
+                <p>选择一个模型并输入您的问题</p>
+              </template>
             </div>
             <div
               v-if="currentSession && currentSession.messages && currentSession.messages.length > 0"
