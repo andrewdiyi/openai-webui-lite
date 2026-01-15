@@ -4821,25 +4821,6 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                 'openai_global_role_prompt_enabled'
               )) !== false;
 
-            // 加载会话数据
-            const savedSessions = await window.openaiDB.getItem(
-              'openai_sessions'
-            );
-            if (savedSessions) {
-              let parsed = JSON.parse(savedSessions);
-              // 执行数据迁移
-              const migratedSessions = this.migrateSessionData(parsed);
-              if (migratedSessions) {
-                this.sessions = migratedSessions;
-                // 迁移后保存
-                this.sleep(300).then(() => {
-                  this.saveData();
-                });
-              } else {
-                this.sessions = parsed;
-              }
-            }
-
             // 加载当前会话ID
             const savedCurrentId = await window.openaiDB.getItem(
               'openai_current_session'
@@ -4890,6 +4871,25 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
 
             // 加载当前会话的草稿
             this.loadDraftFromCurrentSession();
+
+            // 加载会话数据
+            const savedSessions = await window.openaiDB.getItem(
+              'openai_sessions'
+            );
+            if (savedSessions) {
+              let parsed = JSON.parse(savedSessions);
+              // 执行数据迁移
+              const migratedSessions = this.migrateSessionData(parsed);
+              if (migratedSessions) {
+                this.sessions = migratedSessions;
+                // 迁移后保存
+                this.sleep(300).then(() => {
+                  this.saveData();
+                });
+              } else {
+                this.sessions = parsed;
+              }
+            }
 
             // 首次向用户询问 API Key
             if (!this.apiKey && this.isTotallyBlank) {
