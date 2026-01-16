@@ -5138,10 +5138,10 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
 
           // 触发图片上传
           triggerImageUpload() {
-            if (this.uploadedImages.length >= 3) {
+            if (this.uploadedImages.length >= 5) {
               this.showSwal({
                 title: '无法上传',
-                text: '最多只能上传3张图片',
+                text: '最多只能上传5张图片',
                 icon: 'warning',
                 confirmButtonText: '确定'
               });
@@ -5453,10 +5453,10 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                 event.preventDefault(); // 阻止默认粘贴行为
 
                 // 检查是否已达到上传限制
-                if (this.uploadedImages.length >= 3) {
+                if (this.uploadedImages.length >= 5) {
                   this.showSwal({
                     title: '无法上传',
-                    text: '最多只能上传3张图片',
+                    text: '最多只能上传5张图片',
                     icon: 'warning',
                     confirmButtonText: '确定'
                   });
