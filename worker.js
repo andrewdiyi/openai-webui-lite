@@ -933,6 +933,7 @@ function getLiteModelId(modelIds) {
     .filter(i => i);
   const parts = [
     '-v3',
+    '-oss-',
     '-mini',
     'qwen3-max',
     '-k2',
