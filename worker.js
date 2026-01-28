@@ -1389,7 +1389,7 @@ function getManifestContent(title) {
 }
 
 function getHtmlContent(modelIds, tavilyKeys, title) {
-  let htmlContent = `<!DOCTYPE html>
+  let htmlContent = `<!doctype html>
 <html lang="zh-Hans">
   <head>
     <meta charset="UTF-8" />
@@ -4520,9 +4520,8 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
 
               // WebDAV连通性测试
               Swal.showLoading();
-              var result = await window.openaiDB.testWebDAVConnection(
-                webdavConfig
-              );
+              var result =
+                await window.openaiDB.testWebDAVConnection(webdavConfig);
               if (!result.success) {
                 Swal.hideLoading();
                 this.showToast('WebDAV 连接失败: ' + result.error, 'error');
@@ -4556,9 +4555,8 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
 
           // 加载会话数据（独立方法）
           async loadSessions() {
-            var savedSessions = await window.openaiDB.getItem(
-              'openai_sessions'
-            );
+            var savedSessions =
+              await window.openaiDB.getItem('openai_sessions');
             if (savedSessions) {
               var parsed = JSON.parse(savedSessions);
               var migratedSessions = this.migrateSessionData(parsed);
@@ -4887,9 +4885,8 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
             this.loadDraftFromCurrentSession();
 
             // 加载会话数据
-            const savedSessions = await window.openaiDB.getItem(
-              'openai_sessions'
-            );
+            const savedSessions =
+              await window.openaiDB.getItem('openai_sessions');
             if (savedSessions) {
               let parsed = JSON.parse(savedSessions);
               // 执行数据迁移
@@ -5728,10 +5725,7 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
           },
 
           copyToClipboard(text) {
-            const regexp = new RegExp(
-              '\\[([0-9]+)\\]\\(javascript:void\\(0\\)\\)',
-              'g'
-            );
+            const regexp = /\$\$(\\d+)\$\$\$javascript:void\\(0\\)/g;
             text = text.replace(regexp, '$1');
             navigator.clipboard
               .writeText(text)
