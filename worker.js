@@ -2595,8 +2595,7 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
 
         // 构建WebDAV代理请求头
         _buildProxyHeaders(config, extraHeaders = {}) {
-          var regexp = new RegExp('\\/\$');
-          var baseUrl = config.url.replace(regexp, '');
+          var baseUrl = config.url.replace(/\\/\$/, '');
           var headers = {
             'X-WebDAV-URL': baseUrl,
             'X-WebDAV-Auth':
@@ -5646,8 +5645,7 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
 
           formatTimeStr(time) {
             let str = new Date(time).toLocaleString();
-            const regex = new RegExp(':\\d{1,2}\$');
-            str = str.replace(regex, '');
+            str = str.replace(/\\d{1,2}\$/, '');
             return str;
           },
 
