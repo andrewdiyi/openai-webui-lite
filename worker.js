@@ -4895,9 +4895,6 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
               'openai_enable_search'
             ));
 
-            // 加载当前会话的草稿
-            this.loadDraftFromCurrentSession();
-
             // 加载会话数据
             const savedSessions =
               await window.openaiDB.getItem('openai_sessions');
@@ -4926,6 +4923,7 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
               this.currentSessionId = this.sessions[0].id;
             }
             this.autoFoldRolePrompt();
+            this.loadDraftFromCurrentSession(); // 加载当前会话的草稿
 
             // 首次向用户询问 API Key
             if (!this.apiKey && this.isTotallyBlank) {
