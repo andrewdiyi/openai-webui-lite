@@ -6361,7 +6361,7 @@ function getHtmlContent(modelIds, tavilyKeys, title) {
                         // 如果之前在思考模式，现在要输出正式内容了，先关闭思考块
                         if (isInThinking) {
                           this.streamingContent += '\\n</details>\\n\\n';
-                          this.streamingContent.replace(
+                          this.streamingContent = this.streamingContent.replace(
                             '<details class="thinking" open',
                             '<details class="thinking"'
                           );
